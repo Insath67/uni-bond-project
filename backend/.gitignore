@@ -1,0 +1,16 @@
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+.env.*
+
+backend/venv/
+backend/.venv/
+*.env
+**/__Pycache__/
+**/*.pyc
+uploads/
+**/uploads/

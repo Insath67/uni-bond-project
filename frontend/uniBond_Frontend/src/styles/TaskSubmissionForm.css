@@ -1,0 +1,386 @@
+/* Task Submission Form Styles */
+
+.task-submission-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.task-submission-container .form-header {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-submission-container .form-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.task-submission-container .close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.task-submission-container .close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.task-submission-container .form-body {
+  padding: 2rem;
+}
+
+.task-info {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #f5576c;
+}
+
+.task-info .info-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #7f8c8d;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.task-info .info-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.task-submission-container .error-message {
+  background-color: #fee;
+  border-left: 4px solid #f44;
+  color: #c33;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.submission-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.task-submission-container .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-submission-container .form-group label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.task-submission-container .optional-badge {
+  background: #ecf0f1;
+  color: #7f8c8d;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.task-submission-container .text-input,
+.task-submission-container .textarea-input {
+  padding: 0.75rem;
+  border: 2px solid #ecf0f1;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+}
+
+.task-submission-container .text-input:focus,
+.task-submission-container .textarea-input:focus {
+  outline: none;
+  border-color: #f5576c;
+  box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+}
+
+.task-submission-container .text-input::placeholder,
+.task-submission-container .textarea-input::placeholder {
+  color: #bdc3c7;
+}
+
+.task-submission-container .textarea-input {
+  resize: vertical;
+  min-height: 150px;
+  line-height: 1.6;
+}
+
+.task-submission-container .helper-text {
+  font-size: 0.8rem;
+  color: #95a5a6;
+  margin: 0.25rem 0 0 0;
+}
+
+/* Form Divider */
+.form-divider {
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.form-divider span {
+  color: #bdc3c7;
+  font-weight: 600;
+  background: white;
+  padding: 0 1rem;
+  position: relative;
+}
+
+.form-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background: #ecf0f1;
+  z-index: -1;
+}
+
+/* Submission Guidelines */
+.submission-guidelines {
+  background: #fffbea;
+  border: 1px solid #ffe5a8;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.submission-guidelines h4 {
+  color: #e67e22;
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+}
+
+.submission-guidelines ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.submission-guidelines li {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.submission-guidelines li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #27ae60;
+  font-weight: bold;
+}
+
+/* Form Actions */
+.task-submission-container .form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.task-submission-container .btn-cancel,
+.task-submission-container .btn-submit {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.task-submission-container .btn-cancel {
+  background: #ecf0f1;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.task-submission-container .btn-cancel:hover:not(:disabled) {
+  background: #bdc3c7;
+  color: white;
+}
+
+.task-submission-container .btn-submit {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  flex: 1.5;
+}
+
+.task-submission-container .btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+}
+
+.task-submission-container .btn-cancel:disabled,
+.task-submission-container .btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success Message */
+.submission-success {
+  text-align: center;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.submission-success .success-icon {
+  font-size: 3rem;
+  color: #27ae60;
+  background: #d4edda;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.submission-success h3 {
+  color: #27ae60;
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.submission-success p {
+  color: #7f8c8d;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.submission-success .success-message {
+  background: #d4edda;
+  color: #155724;
+  padding: 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .task-submission-container {
+    border-radius: 8px;
+  }
+
+  .task-submission-container .form-header {
+    padding: 1rem;
+  }
+
+  .task-submission-container .form-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .task-submission-container .form-body {
+    padding: 1.5rem;
+  }
+
+  .task-submission-container .form-actions {
+    flex-direction: column;
+  }
+
+  .task-submission-container .btn-cancel,
+  .task-submission-container .btn-submit {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .task-submission-container .form-body {
+    padding: 1rem;
+  }
+
+  .task-submission-container .form-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .task-submission-container .close-btn {
+    align-self: flex-end;
+  }
+
+  .task-info {
+    padding: 0.75rem;
+  }
+
+  .task-submission-container .textarea-input {
+    min-height: 120px;
+  }
+
+  .submission-guidelines {
+    padding: 0.75rem;
+  }
+
+  .submission-success .success-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+}
