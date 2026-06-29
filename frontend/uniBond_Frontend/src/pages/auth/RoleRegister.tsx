@@ -11,6 +11,8 @@ import {
     Briefcase,
     Building2,
     CheckCircle2,
+    Eye,
+    EyeOff,
     GraduationCap,
     Lock,
     Mail,
@@ -60,12 +62,19 @@ const roleContent: Record<Role, { label: string; emoji: string; title: string; d
     },
 };
 
-const EDUCATION_OPTIONS = [
+const STUDENT_STUDY_OPTIONS = [
+    { value: "", label: "Select your current study level" },
+    { value: "Undergraduate Student", label: "Undergraduate Student" },
+    { value: "Master's Student", label: "Master's Student" },
+    { value: "PhD Student", label: "PhD Student" },
+    { value: "Other", label: "Other" },
+];
+
+const LECTURER_EDUCATION_OPTIONS = [
     { value: "", label: "Select Education Level" },
-    { value: "Diploma", label: "Diploma" },
-    { value: "Higher Diploma", label: "Higher Diploma" },
     { value: "Bachelor", label: "Bachelor" },
     { value: "Master", label: "Master" },
+    { value: "PhD", label: "PhD" },
 ];
 
 const benefitsByRole: Record<Role, string[]> = {
@@ -88,6 +97,66 @@ const benefitsByRole: Record<Role, string[]> = {
         "Create a verified mentor profile",
         "Share technical expertise with students",
         "Support project teams and technical learning",
+    ],
+    admin: [],
+};
+
+const registrationStepsByRole: Record<Role, { title: string; description: string }[]> = {
+    student: [
+        {
+            title: "Submit student details",
+            description: "Add your institute, current study level, and course details.",
+        },
+        {
+            title: "Admin review",
+            description: "Your account will be reviewed before full platform access.",
+        },
+        {
+            title: "Start collaborating",
+            description: "Join groups, find support, tasks, and opportunities.",
+        },
+    ],
+    lecturer: [
+        {
+            title: "Submit academic profile",
+            description: "Add your institute and education qualification details.",
+        },
+        {
+            title: "Lecturer verification",
+            description: "Admin verifies your lecturer account before approval.",
+        },
+        {
+            title: "Guide students",
+            description: "Support academic collaboration and student learning.",
+        },
+    ],
+    company: [
+        {
+            title: "Submit company details",
+            description: "Add company name, industry, size, and contact information.",
+        },
+        {
+            title: "Company verification",
+            description: "Admin verifies the company before approving access.",
+        },
+        {
+            title: "Post opportunities",
+            description: "Publish internships, projects, and student opportunities.",
+        },
+    ],
+    tech_lead: [
+        {
+            title: "Submit expertise details",
+            description: "Add your industry expertise and years of experience.",
+        },
+        {
+            title: "Profile review",
+            description: "Admin reviews your mentor profile before approval.",
+        },
+        {
+            title: "Start mentoring",
+            description: "Support students through technical guidance and projects.",
+        },
     ],
     admin: [],
 };
@@ -182,6 +251,8 @@ export default function RoleRegister() {
     const [pendingMsg, setPendingMsg] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     useEffect(() => {
         setForm({ role: safeRole });
@@ -189,6 +260,9 @@ export default function RoleRegister() {
         setError("");
         setFieldErrors({});
         setPendingMsg("");
+        setConfirmPassword("");
+        setShowPassword(false);
+        setShowConfirmPassword(false);
     }, [safeRole]);
 
     if (!fixedRole || fixedRole === "admin") {
@@ -198,6 +272,7 @@ export default function RoleRegister() {
     const role = fixedRole;
     const currentRole = roleContent[role];
     const benefits = benefitsByRole[role];
+    const registrationSteps = registrationStepsByRole[role];
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setError("");
@@ -219,6 +294,24 @@ export default function RoleRegister() {
             return;
         }
 
+        if (!confirmPassword.trim()) {
+            setFieldErrors((prev) => ({
+                ...prev,
+                confirmPassword: "Please confirm your password.",
+            }));
+            setError("Please confirm your password.");
+            return;
+        }
+
+        if (form.password !== confirmPassword) {
+            setFieldErrors((prev) => ({
+                ...prev,
+                confirmPassword: "Passwords do not match.",
+            }));
+            setError("Passwords do not match.");
+            return;
+        }
+
         const userData = {
             firstname: form.firstname.trim(),
             lastname: form.lastname.trim(),
@@ -230,6 +323,7 @@ export default function RoleRegister() {
             mobile: form.mobile.trim(),
             school: form.school?.trim() || undefined,
             education: form.education || undefined,
+            courseName: form.courseName?.trim() || undefined,
             companyName: form.companyName?.trim() || undefined,
             industry: form.industry?.trim() || undefined,
             companySize: form.companySize?.trim() || undefined,
@@ -259,18 +353,19 @@ export default function RoleRegister() {
                 setForm({ role });
                 setFieldErrors({});
                 setCvFile(null);
+                setConfirmPassword("");
             }
         }
     };
 
     return (
         <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.18),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(96,165,250,0.2),transparent_35%)] px-4 py-8 text-[var(--text-primary)]">
-            <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl items-center justify-center">
-                <div className="grid w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[var(--surface)]/70 shadow-2xl backdrop-blur-xl lg:grid-cols-[0.9fr_1.1fr]">
-                    <section className="relative hidden min-h-[720px] flex-col justify-between overflow-hidden p-10 lg:flex">
+            <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl items-start justify-center">
+                <div className="grid w-full gap-8 rounded-[2rem] border border-white/10 bg-[var(--surface)]/70 p-6 shadow-2xl backdrop-blur-xl lg:grid-cols-[0.75fr_1.25fr] lg:p-8">
+                    <section className="relative hidden self-start overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[0.04] p-8 lg:sticky lg:top-8 lg:block">
                         <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand)]/20 via-transparent to-[var(--accent)]/20" />
-                        <div className="absolute -left-24 top-20 h-64 w-64 rounded-full bg-[var(--brand)]/20 blur-3xl" />
-                        <div className="absolute -bottom-24 right-10 h-72 w-72 rounded-full bg-[var(--accent)]/20 blur-3xl" />
+                        <div className="absolute -left-24 top-16 h-56 w-56 rounded-full bg-[var(--brand)]/20 blur-3xl" />
+                        <div className="absolute -bottom-24 right-8 h-64 w-64 rounded-full bg-[var(--accent)]/20 blur-3xl" />
 
                         <div className="relative z-10">
                             <button
@@ -282,41 +377,80 @@ export default function RoleRegister() {
                                 Choose another role
                             </button>
 
-                            <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-[var(--text-secondary)]">
+                            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-[var(--text-secondary)]">
                                 <span className="h-2 w-2 rounded-full bg-[var(--brand)]" />
                                 {currentRole.emoji} {currentRole.label} Registration
                             </div>
 
-                            <h1 className="mt-8 max-w-xl text-5xl font-black leading-tight tracking-tight text-[var(--text-primary)]">
+                            <h1 className="mt-7 text-4xl font-black leading-tight tracking-tight text-[var(--text-primary)]">
                                 Join UniBond as a{" "}
                                 <span className="bg-gradient-to-r from-[var(--brand)] to-[var(--accent)] bg-clip-text text-transparent">
                                     {currentRole.label}
                                 </span>
                             </h1>
 
-                            <p className="mt-5 max-w-lg text-base leading-7 text-[var(--text-secondary)]">
+                            <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
                                 {currentRole.description}
                             </p>
-                        </div>
 
-                        <div className="relative z-10 grid gap-4">
-                            {benefits.map((benefit, index) => (
-                                <div
-                                    key={benefit}
-                                    className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur"
-                                >
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--brand)]/15 text-sm font-bold text-[var(--brand)]">
-                                        0{index + 1}
-                                    </div>
-                                    <p className="text-sm font-semibold text-[var(--text-secondary)]">
-                                        {benefit}
-                                    </p>
+                            <div className="mt-8">
+                                <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--brand)]">
+                                    What you get
+                                </h3>
+
+                                <div className="mt-4 grid gap-3">
+                                    {benefits.map((benefit, index) => (
+                                        <div
+                                            key={benefit}
+                                            className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur"
+                                        >
+                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--brand)]/15 text-sm font-bold text-[var(--brand)]">
+                                                0{index + 1}
+                                            </div>
+
+                                            <p className="text-sm font-semibold leading-6 text-[var(--text-secondary)]">
+                                                {benefit}
+                                            </p>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                            </div>
+
+                            <div className="mt-8 rounded-3xl border border-white/10 bg-black/10 p-5 backdrop-blur">
+                                <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--brand)]">
+                                    Registration process
+                                </h3>
+
+                                <div className="mt-5 space-y-4">
+                                    {registrationSteps.map((step, index) => (
+                                        <div key={step.title} className="flex gap-4">
+                                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--brand)]/30 bg-[var(--brand)]/10 text-xs font-black text-[var(--brand)]">
+                                                {index + 1}
+                                            </div>
+
+                                            <div>
+                                                <h4 className="text-sm font-bold text-[var(--text-primary)]">
+                                                    {step.title}
+                                                </h4>
+                                                <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                                                    {step.description}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="mt-6 rounded-2xl border border-[var(--brand)]/20 bg-[var(--brand)]/10 p-4">
+                                <p className="text-xs font-semibold leading-6 text-[var(--text-secondary)]">
+                                    Your account will be available after admin approval. Make sure the
+                                    details you enter are accurate.
+                                </p>
+                            </div>
                         </div>
                     </section>
 
-                    <section className="flex items-center justify-center p-6 sm:p-10">
+                    <section className="flex justify-center">
                         <form
                             onSubmit={onSubmit}
                             className="panel-surface w-full max-w-2xl rounded-[2rem] p-7 sm:p-9"
@@ -399,35 +533,118 @@ export default function RoleRegister() {
                                 </Field>
 
                                 <div>
-                                    <div className="mb-1.5 flex items-center justify-between">
-                                        <label className="block text-sm font-semibold text-[var(--text-primary)]">
-                                            Password <span className="text-[var(--brand)]">*</span>
-                                        </label>
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword((current) => !current)}
-                                            className="text-xs font-semibold text-[var(--accent)] hover:underline"
-                                        >
-                                            {showPassword ? "Hide" : "Show"}
-                                        </button>
-                                    </div>
+                                    <label className="mb-1.5 block text-sm font-semibold text-[var(--text-primary)]">
+                                        Password <span className="text-[var(--brand)]">*</span>
+                                    </label>
 
-                                    <Field
-                                        label=""
-                                        icon={<Lock className="h-4 w-4" />}
-                                        hint="Use at least 8 characters."
-                                        error={fieldErrors.password}
-                                    >
-                                        <InputField
+                                    <div className="relative">
+                                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
+                                            <Lock className="h-4 w-4" />
+                                        </span>
+
+                                        <input
                                             name="password"
                                             type={showPassword ? "text" : "password"}
                                             placeholder="Enter your password"
                                             value={form.password ?? ""}
                                             onChange={handleChange}
                                             required
-                                            error={fieldErrors.password}
+                                            aria-invalid={Boolean(fieldErrors.password)}
+                                            className={`field-shell w-full text-sm ${
+                                                fieldErrors.password ? "field-shell-error" : ""
+                                            }`}
+                                            style={{
+                                                paddingLeft: "2.9rem",
+                                                paddingRight: "3rem",
+                                                paddingTop: "0.8rem",
+                                                paddingBottom: "0.8rem",
+                                            }}
                                         />
-                                    </Field>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword((current) => !current)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition hover:text-[var(--accent)]"
+                                            aria-label={showPassword ? "Hide password" : "Show password"}
+                                        >
+                                            {showPassword ? (
+                                                <EyeOff className="h-4 w-4" />
+                                            ) : (
+                                                <Eye className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    </div>
+
+                                    {fieldErrors.password ? (
+                                        <p className="ml-1 mt-1 text-xs font-medium text-red-400">
+                                            {fieldErrors.password}
+                                        </p>
+                                    ) : (
+                                        <p className="ml-1 mt-1 text-xs text-[var(--text-muted)]">
+                                            Use at least 8 characters.
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label className="mb-1.5 block text-sm font-semibold text-[var(--text-primary)]">
+                                        Confirm Password <span className="text-[var(--brand)]">*</span>
+                                    </label>
+
+                                    <div className="relative">
+                                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
+                                            <Lock className="h-4 w-4" />
+                                        </span>
+
+                                        <input
+                                            name="confirmPassword"
+                                            type={showConfirmPassword ? "text" : "password"}
+                                            placeholder="Re-enter your password"
+                                            value={confirmPassword}
+                                            onChange={(e) => {
+                                                setConfirmPassword(e.target.value);
+                                                setFieldErrors((prev) => ({
+                                                    ...prev,
+                                                    confirmPassword: "",
+                                                }));
+                                                setError("");
+                                            }}
+                                            required
+                                            aria-invalid={Boolean(fieldErrors.confirmPassword)}
+                                            className={`field-shell w-full text-sm ${
+                                                fieldErrors.confirmPassword ? "field-shell-error" : ""
+                                            }`}
+                                            style={{
+                                                paddingLeft: "2.9rem",
+                                                paddingRight: "3rem",
+                                                paddingTop: "0.8rem",
+                                                paddingBottom: "0.8rem",
+                                            }}
+                                        />
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword((current) => !current)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition hover:text-[var(--accent)]"
+                                            aria-label={
+                                                showConfirmPassword
+                                                    ? "Hide confirm password"
+                                                    : "Show confirm password"
+                                            }
+                                        >
+                                            {showConfirmPassword ? (
+                                                <EyeOff className="h-4 w-4" />
+                                            ) : (
+                                                <Eye className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    </div>
+
+                                    {fieldErrors.confirmPassword ? (
+                                        <p className="ml-1 mt-1 text-xs font-medium text-red-400">
+                                            {fieldErrors.confirmPassword}
+                                        </p>
+                                    ) : null}
                                 </div>
 
                                 <div className="grid gap-4 sm:grid-cols-2">
@@ -467,14 +684,14 @@ export default function RoleRegister() {
                                 <Field
                                     label="Mobile Number"
                                     icon={<Phone className="h-4 w-4" />}
-                                    hint="Format: 0775078338"
+                                    hint="Format: +94775078338"
                                     error={fieldErrors.mobile}
                                     required
                                 >
                                     <InputField
                                         name="mobile"
                                         type="tel"
-                                        placeholder="0775078338"
+                                        placeholder="+94775078338"
                                         value={form.mobile ?? ""}
                                         onChange={handleChange}
                                         required
@@ -482,17 +699,82 @@ export default function RoleRegister() {
                                     />
                                 </Field>
 
-                                {(role === "student" || role === "lecturer") && (
+                                {role === "student" && (
                                     <>
                                         <Field
-                                            label={role === "student" ? "School / University" : "University / Institute"}
+                                            label="University / Institute"
                                             icon={<GraduationCap className="h-4 w-4" />}
                                             error={fieldErrors.school}
                                             required
                                         >
                                             <InputField
                                                 name="school"
-                                                placeholder={role === "student" ? "e.g. SLIIT" : "e.g. SLIIT / University"}
+                                                placeholder="e.g. SLIIT"
+                                                value={form.school ?? ""}
+                                                onChange={handleChange}
+                                                required
+                                                error={fieldErrors.school}
+                                            />
+                                        </Field>
+
+                                        <div>
+                                            <label className="mb-1.5 block text-sm font-semibold text-[var(--text-primary)]">
+                                                Current Study Level <span className="text-[var(--brand)]">*</span>
+                                            </label>
+
+                                            <select
+                                                name="education"
+                                                value={form.education ?? ""}
+                                                onChange={handleChange}
+                                                required
+                                                aria-invalid={Boolean(fieldErrors.education)}
+                                                className={`field-shell w-full px-4 py-3 text-sm ${
+                                                    fieldErrors.education ? "field-shell-error" : ""
+                                                }`}
+                                            >
+                                                {STUDENT_STUDY_OPTIONS.map((opt) => (
+                                                    <option key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                            {fieldErrors.education ? (
+                                                <p className="ml-1 mt-1 text-xs font-medium text-red-400">
+                                                    {fieldErrors.education}
+                                                </p>
+                                            ) : null}
+                                        </div>
+
+                                        <Field
+                                            label="Course / Programme Name"
+                                            icon={<GraduationCap className="h-4 w-4" />}
+                                            error={fieldErrors.courseName}
+                                            required
+                                        >
+                                            <InputField
+                                                name="courseName"
+                                                placeholder="e.g. BSc (Hons) in Information Technology"
+                                                value={form.courseName ?? ""}
+                                                onChange={handleChange}
+                                                required
+                                                error={fieldErrors.courseName}
+                                            />
+                                        </Field>
+                                    </>
+                                )}
+
+                                {role === "lecturer" && (
+                                    <>
+                                        <Field
+                                            label="University / Institute"
+                                            icon={<GraduationCap className="h-4 w-4" />}
+                                            error={fieldErrors.school}
+                                            required
+                                        >
+                                            <InputField
+                                                name="school"
+                                                placeholder="e.g. SLIIT / University"
                                                 value={form.school ?? ""}
                                                 onChange={handleChange}
                                                 required
@@ -509,12 +791,13 @@ export default function RoleRegister() {
                                                 name="education"
                                                 value={form.education ?? ""}
                                                 onChange={handleChange}
+                                                required
                                                 aria-invalid={Boolean(fieldErrors.education)}
                                                 className={`field-shell w-full px-4 py-3 text-sm ${
                                                     fieldErrors.education ? "field-shell-error" : ""
                                                 }`}
                                             >
-                                                {EDUCATION_OPTIONS.map((opt) => (
+                                                {LECTURER_EDUCATION_OPTIONS.map((opt) => (
                                                     <option key={opt.value} value={opt.value}>
                                                         {opt.label}
                                                     </option>
@@ -636,6 +919,7 @@ export default function RoleRegister() {
                                             className="flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-[var(--border-soft)] px-4 py-4 text-sm text-[var(--text-secondary)] transition hover:border-[var(--brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand-strong)]"
                                         >
                                             <Upload className="h-4 w-4" />
+
                                             <span className="truncate">
                                                 {cvFile ? cvFile.name : "Click to select CV file"}
                                             </span>
@@ -670,6 +954,7 @@ export default function RoleRegister() {
                                     {loading && (
                                         <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
                                     )}
+
                                     {loading ? "Creating account..." : `Create ${currentRole.label} Account`}
                                 </button>
 

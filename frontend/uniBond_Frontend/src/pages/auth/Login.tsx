@@ -5,6 +5,7 @@ import { ROUTES } from "@/utils/constants";
 import apiClient from "@/services/api/axiosClient";
 import Input from "@/components/Input";
 import { validateLogin } from "@/utils/validators";
+import { Eye, EyeOff, Lock } from "lucide-react";
 
 const extractApiErrorMessage = (err: unknown): string => {
     const apiError = err as any;
@@ -100,7 +101,6 @@ export default function Login() {
         <main className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.18),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(96,165,250,0.2),transparent_35%)] px-4 py-8 text-[var(--text-primary)]">
             <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl items-center justify-center">
                 <div className="grid w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[var(--surface)]/70 shadow-2xl backdrop-blur-xl lg:grid-cols-[1.05fr_0.95fr]">
-                    
                     <section className="relative hidden min-h-[620px] flex-col justify-between overflow-hidden p-10 lg:flex">
                         <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand)]/20 via-transparent to-[var(--accent)]/20" />
                         <div className="absolute -left-24 top-20 h-64 w-64 rounded-full bg-[var(--brand)]/20 blur-3xl" />
@@ -188,36 +188,61 @@ export default function Login() {
                                 />
 
                                 <div>
-                                    <div className="mb-2 flex items-center justify-between">
-                                        <span className="text-sm font-semibold text-[var(--text-primary)]">
-                                            Password *
+                                    <label className="mb-2 block text-sm font-semibold text-[var(--text-primary)]">
+                                        Password <span className="text-[var(--brand)]">*</span>
+                                    </label>
+
+                                    <div className="relative">
+                                        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
+                                            <Lock className="h-4 w-4" />
                                         </span>
+
+                                        <input
+                                            name="password"
+                                            type={showPassword ? "text" : "password"}
+                                            value={password}
+                                            onChange={(e) => {
+                                                setPassword(e.target.value);
+                                                setFieldErrors((current) => ({
+                                                    ...current,
+                                                    password: undefined,
+                                                }));
+                                                setError("");
+                                            }}
+                                            placeholder="Enter your password"
+                                            required
+                                            autoComplete="current-password"
+                                            aria-invalid={Boolean(fieldErrors.password)}
+                                            className={`field-shell w-full text-sm ${
+                                                fieldErrors.password ? "field-shell-error" : ""
+                                            }`}
+                                            style={{
+                                                paddingLeft: "2.9rem",
+                                                paddingRight: "3rem",
+                                                paddingTop: "0.8rem",
+                                                paddingBottom: "0.8rem",
+                                            }}
+                                        />
+
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword((current) => !current)}
-                                            className="text-xs font-semibold text-[var(--accent)] hover:underline"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition hover:text-[var(--accent)]"
+                                            aria-label={showPassword ? "Hide password" : "Show password"}
                                         >
-                                            {showPassword ? "Hide" : "Show"}
+                                            {showPassword ? (
+                                                <EyeOff className="h-4 w-4" />
+                                            ) : (
+                                                <Eye className="h-4 w-4" />
+                                            )}
                                         </button>
                                     </div>
 
-                                    <Input
-    label=""
-    name="password"
-    type={showPassword ? "text" : "password"}
-    value={password}
-    onChange={(e) => {
-        setPassword(e.target.value);
-        setFieldErrors((current) => ({
-            ...current,
-            password: undefined,
-        }));
-        setError("");
-    }}
-    placeholder="Enter your password"
-    error={fieldErrors.password}
-    autoComplete="current-password"
-/>
+                                    {fieldErrors.password ? (
+                                        <p className="ml-1 mt-1 text-xs font-medium text-red-400">
+                                            {fieldErrors.password}
+                                        </p>
+                                    ) : null}
                                 </div>
                             </div>
 
