@@ -31,6 +31,7 @@ import CourseDetails from "@/pages/courses/CourseDetails";
 import CourseContentView from "@/pages/courses/CourseContentView";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
+import RoleRegister from "@/pages/auth/RoleRegister";
 import ForgotPassword from "@/pages/auth/ForgotPassword";
 import AdminRoute from "@/routes/AdminRoute";
 import AdminLayout from "@/components/layout/AdminLayout";
@@ -59,6 +60,16 @@ export default function AppRoutes() {
           </PublicRoute>
         }
       />
+
+      <Route
+        path={`${ROUTES.REGISTER}/:role`}
+        element={
+          <PublicRoute>
+            <RoleRegister />
+          </PublicRoute>
+        }
+      />
+
       <Route
         path={ROUTES.FORGOT_PASSWORD}
         element={
