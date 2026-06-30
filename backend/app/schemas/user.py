@@ -19,6 +19,10 @@ class AccessStatus(str, Enum):
     pending = "pending"
 
 
+MOBILE_PATTERN = r"^\+947\d{8}$"
+MOBILE_ERROR_MESSAGE = "Mobile number must be in country code format, e.g. +94775078338"
+
+
 class UserCreate(BaseModel):
     first_name: str
     last_name: str
@@ -28,11 +32,17 @@ class UserCreate(BaseModel):
     role: UserRole
     description: Optional[str] = None
     education_status: Optional[str] = None
-    # New fields
+
     city: str
     country: str
-    school: Optional[str] = None   # Required for student / lecturer
+    school: Optional[str] = None
     mobile: str
+
+    company_name: Optional[str] = None
+    industry: Optional[str] = None
+    company_size: Optional[str] = None
+    industry_expertise: Optional[str] = None
+    years_of_experience: Optional[str] = None
 
     @field_validator("first_name", "last_name", "username", "city", "country")
     @classmethod
@@ -41,6 +51,23 @@ class UserCreate(BaseModel):
         if not clean:
             raise ValueError("This field is required")
         return clean
+
+    @field_validator(
+        "school",
+        "description",
+        "education_status",
+        "company_name",
+        "industry",
+        "company_size",
+        "industry_expertise",
+        "years_of_experience",
+    )
+    @classmethod
+    def normalize_optional_text(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return value
+        clean = value.strip()
+        return clean or None
 
     @field_validator("password")
     @classmethod
@@ -53,13 +80,36 @@ class UserCreate(BaseModel):
     @field_validator("mobile")
     @classmethod
     def validate_mobile(cls, v: str) -> str:
-        """Sri Lankan mobile: 10 digits starting with 0 (e.g. 0775078338)"""
         clean = v.strip()
-        if not re.fullmatch(r"0\d{9}", clean):
-            raise ValueError(
-                "Mobile must be 10 digits and start with 0 (e.g. 0775078338)"
-            )
+        if not re.fullmatch(MOBILE_PATTERN, clean):
+            raise ValueError(MOBILE_ERROR_MESSAGE)
         return clean
+
+    @model_validator(mode="after")
+    def validate_role_specific_fields(self):
+        if self.role in (UserRole.student, UserRole.lecturer):
+            if not self.school:
+                raise ValueError("School/University is required for students and lecturers.")
+            if not self.education_status:
+                raise ValueError("Education level is required for students and lecturers.")
+
+        if self.role == UserRole.company:
+            if not self.company_name:
+                raise ValueError("Company name is required for company users.")
+            if not self.industry:
+                raise ValueError("Industry is required for company users.")
+            if not self.company_size:
+                raise ValueError("Company size is required for company users.")
+
+        if self.role == UserRole.tech_lead:
+            if not self.industry_expertise:
+                raise ValueError("Industry expertise is required for tech lead users.")
+            if not self.years_of_experience:
+                raise ValueError("Years of experience is required for tech lead users.")
+            if not self.years_of_experience.isdigit():
+                raise ValueError("Years of experience must be a valid whole number.")
+
+        return self
 
 
 class UserResponse(BaseModel):
@@ -183,7 +233,21 @@ class UserUpdate(BaseModel):
     industry_expertise: Optional[str] = None
     years_of_experience: Optional[str] = None
 
-    @field_validator("first_name", "last_name", "username", "city", "country", "school", "description", "education_status", "company_name", "industry", "company_size", "industry_expertise", "years_of_experience")
+    @field_validator(
+        "first_name",
+        "last_name",
+        "username",
+        "city",
+        "country",
+        "school",
+        "description",
+        "education_status",
+        "company_name",
+        "industry",
+        "company_size",
+        "industry_expertise",
+        "years_of_experience",
+    )
     @classmethod
     def normalize_optional_text(cls, value: Optional[str]) -> Optional[str]:
         if value is None:
@@ -207,8 +271,8 @@ class UserUpdate(BaseModel):
         if value is None:
             return value
         clean = value.strip()
-        if not re.fullmatch(r"0\d{9}", clean):
-            raise ValueError("Mobile must be 10 digits and start with 0 (e.g. 0775078338)")
+        if not re.fullmatch(MOBILE_PATTERN, clean):
+            raise ValueError(MOBILE_ERROR_MESSAGE)
         return clean
 
     @model_validator(mode="after")
@@ -224,9 +288,17 @@ class UserUpdate(BaseModel):
         if role == UserRole.company:
             if self.company_name is not None and not self.company_name:
                 raise ValueError("Company name is required for company users.")
+            if self.industry is not None and not self.industry:
+                raise ValueError("Industry is required for company users.")
+            if self.company_size is not None and not self.company_size:
+                raise ValueError("Company size is required for company users.")
 
-        if role == UserRole.tech_lead and self.years_of_experience is not None:
-            if not self.years_of_experience.isdigit():
-                raise ValueError("Years of experience must be a valid whole number.")
+        if role == UserRole.tech_lead:
+            if self.industry_expertise is not None and not self.industry_expertise:
+                raise ValueError("Industry expertise is required for tech lead users.")
+
+            if self.years_of_experience is not None:
+                if not self.years_of_experience.isdigit():
+                    raise ValueError("Years of experience must be a valid whole number.")
 
         return self

@@ -11,11 +11,18 @@ export type ValidationResult<T extends string = string> = {
 type RegisterFormValues = Record<string, string>;
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MOBILE_REGEX = /^0\d{9}$/;
+const MOBILE_REGEX = /^\+947\d{8}$/;
 const LETTERS_AND_SPACES_REGEX = /^[A-Za-z\s'-]+$/;
 
-const createResult = <T extends string>(errors: Partial<Record<T, string>>): ValidationResult<T> => {
-  const firstError = Object.values(errors).find((value): value is string => typeof value === "string" && value.length > 0);
+const MOBILE_ERROR_MESSAGE =
+  "Mobile number must be in country code format, e.g. +94775078338.";
+
+const createResult = <T extends string>(
+  errors: Partial<Record<T, string>>
+): ValidationResult<T> => {
+  const firstError = Object.values(errors).find(
+    (value): value is string => typeof value === "string" && value.length > 0
+  );
 
   return {
     isValid: !firstError,
@@ -24,20 +31,31 @@ const createResult = <T extends string>(errors: Partial<Record<T, string>>): Val
   };
 };
 
-export const validateEmail = (email: string): boolean => EMAIL_REGEX.test(email.trim());
+export const validateEmail = (email: string): boolean =>
+  EMAIL_REGEX.test(email.trim());
 
-export const validateMobile = (mobile: string): boolean => MOBILE_REGEX.test(mobile.trim());
+export const validateMobile = (mobile: string): boolean =>
+  MOBILE_REGEX.test(mobile.trim());
 
-export const validateName = (value: string): boolean => LETTERS_AND_SPACES_REGEX.test(value.trim());
+export const validateName = (value: string): boolean =>
+  LETTERS_AND_SPACES_REGEX.test(value.trim());
 
-export const validateSearch = (query: string): { isValid: boolean; error?: string } => {
+export const validateSearch = (
+  query: string
+): { isValid: boolean; error?: string } => {
   const trimmed = query.trim();
+
   if (!trimmed) {
     return { isValid: false, error: "Search query is required" };
   }
+
   if (trimmed.length < 2) {
-    return { isValid: false, error: "Search query must be at least 2 characters" };
+    return {
+      isValid: false,
+      error: "Search query must be at least 2 characters",
+    };
   }
+
   return { isValid: true };
 };
 
@@ -47,18 +65,29 @@ export const validatePost = (
   mediaType?: "image" | "video"
 ): { isValid: boolean; error?: string } => {
   const trimmedContent = content.trim();
+
   if (!trimmedContent && !mediaUrl) {
     return { isValid: false, error: "Post must have content or media" };
   }
+
   if (trimmedContent.length > 1000) {
-    return { isValid: false, error: "Content must be less than 1000 characters" };
+    return {
+      isValid: false,
+      error: "Content must be less than 1000 characters",
+    };
   }
+
   if (mediaUrl && !mediaType) {
-    return { isValid: false, error: "Media type is required if media URL is provided" };
+    return {
+      isValid: false,
+      error: "Media type is required if media URL is provided",
+    };
   }
+
   if (mediaType && !["image", "video"].includes(mediaType)) {
     return { isValid: false, error: "Invalid media type" };
   }
+
   return { isValid: true };
 };
 
@@ -88,8 +117,12 @@ export const validateForgotPassword = (
   mobile: string,
   newPassword: string,
   confirmPassword: string
-): ValidationResult<"email" | "mobile" | "newPassword" | "confirmPassword"> => {
-  const errors: Partial<Record<"email" | "mobile" | "newPassword" | "confirmPassword", string>> = {};
+): ValidationResult<
+  "email" | "mobile" | "newPassword" | "confirmPassword"
+> => {
+  const errors: Partial<
+    Record<"email" | "mobile" | "newPassword" | "confirmPassword", string>
+  > = {};
 
   if (!email.trim()) {
     errors.email = "Email is required.";
@@ -100,7 +133,7 @@ export const validateForgotPassword = (
   if (!mobile.trim()) {
     errors.mobile = "Registered mobile number is required.";
   } else if (!validateMobile(mobile)) {
-    errors.mobile = "Mobile must be 10 digits and start with 0.";
+    errors.mobile = MOBILE_ERROR_MESSAGE;
   }
 
   if (!newPassword.trim()) {
@@ -123,6 +156,7 @@ export const validateRegisterForm = (
   role: Role
 ): ValidationResult<string> => {
   const errors: Record<string, string> = {};
+
   const firstname = form.firstname?.trim() ?? "";
   const lastname = form.lastname?.trim() ?? "";
   const email = form.email?.trim() ?? "";
@@ -132,6 +166,7 @@ export const validateRegisterForm = (
   const mobile = form.mobile?.trim() ?? "";
   const school = form.school?.trim() ?? "";
   const education = form.education?.trim() ?? "";
+  const courseName = form.courseName?.trim() ?? "";
   const companyName = form.companyName?.trim() ?? "";
   const industry = form.industry?.trim() ?? "";
   const companySize = form.companySize?.trim() ?? "";
@@ -181,13 +216,28 @@ export const validateRegisterForm = (
   if (!mobile) {
     errors.mobile = "Mobile number is required.";
   } else if (!validateMobile(mobile)) {
-    errors.mobile = "Mobile must be 10 digits and start with 0.";
+    errors.mobile = MOBILE_ERROR_MESSAGE;
   }
 
-  if (role === "student" || role === "lecturer") {
+  if (role === "student") {
     if (!school) {
-      errors.school = "School or university is required.";
+      errors.school = "University or institute is required.";
     }
+
+    if (!education) {
+      errors.education = "Current study level is required.";
+    }
+
+    if (!courseName) {
+      errors.courseName = "Course or programme name is required.";
+    }
+  }
+
+  if (role === "lecturer") {
+    if (!school) {
+      errors.school = "University or institute is required.";
+    }
+
     if (!education) {
       errors.education = "Education level is required.";
     }
@@ -197,9 +247,11 @@ export const validateRegisterForm = (
     if (!companyName) {
       errors.companyName = "Company name is required.";
     }
+
     if (!industry) {
       errors.industry = "Industry is required.";
     }
+
     if (!companySize) {
       errors.companySize = "Company size is required.";
     }
@@ -212,7 +264,11 @@ export const validateRegisterForm = (
 
     if (!yearsOfExperience) {
       errors.yearsOfExperience = "Years of experience is required.";
-    } else if (Number.isNaN(Number(yearsOfExperience)) || Number(yearsOfExperience) < 0 || Number(yearsOfExperience) > 50) {
+    } else if (
+      Number.isNaN(Number(yearsOfExperience)) ||
+      Number(yearsOfExperience) < 0 ||
+      Number(yearsOfExperience) > 50
+    ) {
       errors.yearsOfExperience = "Enter a valid number between 0 and 50.";
     }
   }
@@ -222,8 +278,29 @@ export const validateRegisterForm = (
 
 export const validateTaskForm = (
   formData: TaskFormData
-): ValidationResult<"title" | "description" | "contactEmail" | "skills" | "studentsNeeded" | "startDate" | "deadline" | "tags"> => {
-  const errors: Partial<Record<"title" | "description" | "contactEmail" | "skills" | "studentsNeeded" | "startDate" | "deadline" | "tags", string>> = {};
+): ValidationResult<
+  | "title"
+  | "description"
+  | "contactEmail"
+  | "skills"
+  | "studentsNeeded"
+  | "startDate"
+  | "deadline"
+  | "tags"
+> => {
+  const errors: Partial<
+    Record<
+      | "title"
+      | "description"
+      | "contactEmail"
+      | "skills"
+      | "studentsNeeded"
+      | "startDate"
+      | "deadline"
+      | "tags",
+      string
+    >
+  > = {};
 
   if (!formData.title.trim()) {
     errors.title = "Task title is required.";
@@ -234,7 +311,8 @@ export const validateTaskForm = (
   if (!formData.description.trim()) {
     errors.description = "Description is required.";
   } else if (formData.description.trim().length < 20) {
-    errors.description = "Description should explain the task in at least 20 characters.";
+    errors.description =
+      "Description should explain the task in at least 20 characters.";
   }
 
   if (!formData.contactEmail.trim()) {
@@ -263,7 +341,10 @@ export const validateTaskForm = (
     const startDate = new Date(formData.startDate);
     const deadlineDate = new Date(formData.deadline);
 
-    if (Number.isNaN(startDate.getTime()) || Number.isNaN(deadlineDate.getTime())) {
+    if (
+      Number.isNaN(startDate.getTime()) ||
+      Number.isNaN(deadlineDate.getTime())
+    ) {
       errors.startDate = "Enter a valid project date.";
     } else if (deadlineDate <= startDate) {
       errors.deadline = "Deadline must be after the start date.";
@@ -282,7 +363,9 @@ export const validateClassroomForm = (
   description: string,
   maxStudents: number
 ): ValidationResult<"title" | "description" | "maxStudents"> => {
-  const errors: Partial<Record<"title" | "description" | "maxStudents", string>> = {};
+  const errors: Partial<
+    Record<"title" | "description" | "maxStudents", string>
+  > = {};
 
   if (!title.trim()) {
     errors.title = "Classroom title is required.";
@@ -310,8 +393,25 @@ export const validateKuppyForm = (
   startDatetime: string,
   endDatetime: string,
   maxStudents: number
-): ValidationResult<"title" | "moduleName" | "description" | "startDatetime" | "endDatetime" | "maxStudents"> => {
-  const errors: Partial<Record<"title" | "moduleName" | "description" | "startDatetime" | "endDatetime" | "maxStudents", string>> = {};
+): ValidationResult<
+  | "title"
+  | "moduleName"
+  | "description"
+  | "startDatetime"
+  | "endDatetime"
+  | "maxStudents"
+> => {
+  const errors: Partial<
+    Record<
+      | "title"
+      | "moduleName"
+      | "description"
+      | "startDatetime"
+      | "endDatetime"
+      | "maxStudents",
+      string
+    >
+  > = {};
 
   if (!title.trim()) {
     errors.title = "Topic is required.";
@@ -335,6 +435,7 @@ export const validateKuppyForm = (
     errors.startDatetime = "Start date and time are required.";
   } else {
     const scheduledStart = new Date(startDatetime);
+
     if (Number.isNaN(scheduledStart.getTime())) {
       errors.startDatetime = "Enter a valid start date and time.";
     } else if (scheduledStart <= new Date()) {
@@ -347,11 +448,18 @@ export const validateKuppyForm = (
   } else {
     const scheduledEnd = new Date(endDatetime);
     const scheduledStart = new Date(startDatetime);
+
     if (Number.isNaN(scheduledEnd.getTime())) {
       errors.endDatetime = "Enter a valid end date and time.";
-    } else if (!Number.isNaN(scheduledStart.getTime()) && scheduledEnd <= scheduledStart) {
+    } else if (
+      !Number.isNaN(scheduledStart.getTime()) &&
+      scheduledEnd <= scheduledStart
+    ) {
       errors.endDatetime = "End time must be after the start time.";
-    } else if (!Number.isNaN(scheduledStart.getTime()) && scheduledEnd.getTime() - scheduledStart.getTime() < 30 * 60 * 1000) {
+    } else if (
+      !Number.isNaN(scheduledStart.getTime()) &&
+      scheduledEnd.getTime() - scheduledStart.getTime() < 30 * 60 * 1000
+    ) {
       errors.endDatetime = "Session duration should be at least 30 minutes.";
     }
   }
@@ -368,8 +476,15 @@ export const validateKuppyRequestForm = (
   description: string,
   requestedBefore: string,
   currentStudentCount: number
-): ValidationResult<"moduleName" | "description" | "requestedBefore" | "currentStudentCount"> => {
-  const errors: Partial<Record<"moduleName" | "description" | "requestedBefore" | "currentStudentCount", string>> = {};
+): ValidationResult<
+  "moduleName" | "description" | "requestedBefore" | "currentStudentCount"
+> => {
+  const errors: Partial<
+    Record<
+      "moduleName" | "description" | "requestedBefore" | "currentStudentCount",
+      string
+    >
+  > = {};
 
   if (!moduleName.trim()) {
     errors.moduleName = "Module name is required.";
@@ -387,6 +502,7 @@ export const validateKuppyRequestForm = (
     errors.requestedBefore = "Needed before date is required.";
   } else {
     const neededBefore = new Date(requestedBefore);
+
     if (Number.isNaN(neededBefore.getTime())) {
       errors.requestedBefore = "Enter a valid deadline.";
     } else if (neededBefore <= new Date()) {
@@ -394,7 +510,11 @@ export const validateKuppyRequestForm = (
     }
   }
 
-  if (!Number.isFinite(currentStudentCount) || currentStudentCount < 1 || currentStudentCount > 500) {
+  if (
+    !Number.isFinite(currentStudentCount) ||
+    currentStudentCount < 1 ||
+    currentStudentCount > 500
+  ) {
     errors.currentStudentCount = "Student count must be between 1 and 500.";
   }
 
@@ -406,7 +526,9 @@ export const validateKuppyOfferForm = (
   availabilityEnd: string,
   description: string
 ): ValidationResult<"availabilityStart" | "availabilityEnd" | "description"> => {
-  const errors: Partial<Record<"availabilityStart" | "availabilityEnd" | "description", string>> = {};
+  const errors: Partial<
+    Record<"availabilityStart" | "availabilityEnd" | "description", string>
+  > = {};
 
   if (!availabilityStart) {
     errors.availabilityStart = "Availability start is required.";
@@ -430,7 +552,10 @@ export const validateKuppyOfferForm = (
       errors.availabilityEnd = "Enter a valid availability end time.";
     } else if (!Number.isNaN(start.getTime()) && end <= start) {
       errors.availabilityEnd = "Availability end must be after the start time.";
-    } else if (!Number.isNaN(start.getTime()) && end.getTime() - start.getTime() < 30 * 60 * 1000) {
+    } else if (
+      !Number.isNaN(start.getTime()) &&
+      end.getTime() - start.getTime() < 30 * 60 * 1000
+    ) {
       errors.availabilityEnd = "Offer duration should be at least 30 minutes.";
     }
   }
@@ -496,7 +621,7 @@ export const validateUserProfileUpdate = (
   if (!payload.mobile.trim()) {
     errors.mobile = "Mobile number is required.";
   } else if (!validateMobile(payload.mobile)) {
-    errors.mobile = "Mobile must be 10 digits and start with 0.";
+    errors.mobile = MOBILE_ERROR_MESSAGE;
   }
 
   if (payload.password?.trim() && payload.password.trim().length < 8) {
@@ -507,17 +632,25 @@ export const validateUserProfileUpdate = (
     errors.school = "School or university is required.";
   }
 
-  if ((role === "student" || role === "lecturer") && !payload.education?.trim()) {
-    errors.education = "Education level is required.";
+  if (
+    (role === "student" || role === "lecturer") &&
+    !payload.education?.trim()
+  ) {
+    errors.education =
+      role === "student"
+        ? "Current study level is required."
+        : "Education level is required.";
   }
 
   if (role === "company") {
     if (!payload.companyName?.trim()) {
       errors.companyName = "Company name is required.";
     }
+
     if (!payload.industry?.trim()) {
       errors.industry = "Industry is required.";
     }
+
     if (!payload.companySize?.trim()) {
       errors.companySize = "Company size is required.";
     }
@@ -527,9 +660,14 @@ export const validateUserProfileUpdate = (
     if (!payload.industryExpertise?.trim()) {
       errors.industryExpertise = "Industry expertise is required.";
     }
+
     if (!payload.yearsOfExperience?.trim()) {
       errors.yearsOfExperience = "Years of experience is required.";
-    } else if (Number.isNaN(Number(payload.yearsOfExperience)) || Number(payload.yearsOfExperience) < 0 || Number(payload.yearsOfExperience) > 50) {
+    } else if (
+      Number.isNaN(Number(payload.yearsOfExperience)) ||
+      Number(payload.yearsOfExperience) < 0 ||
+      Number(payload.yearsOfExperience) > 50
+    ) {
       errors.yearsOfExperience = "Enter a valid number between 0 and 50.";
     }
   }
