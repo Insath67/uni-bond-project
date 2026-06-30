@@ -89,32 +89,31 @@ export default function Home() {
                 <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[var(--accent)]/20 blur-3xl" />
                 <div className="absolute -bottom-24 left-10 h-56 w-56 rounded-full bg-[var(--brand)]/20 blur-3xl" />
 
-                <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                    <div className="max-w-2xl">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-[var(--text-secondary)]">
-                            <span className="h-2 w-2 rounded-full bg-[var(--brand)]" />
-                            UniBond Home Feed
-                        </div>
-
-                        <h1 className="mt-5 text-4xl font-black tracking-tight text-[var(--text-primary)] sm:text-5xl">
-                            Connect, collaborate, and grow with{" "}
-                            <span className="bg-gradient-to-r from-[var(--brand)] to-[var(--accent)] bg-clip-text text-transparent">
-                                UniBond
-                            </span>
-                        </h1>
-
-                        <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--text-secondary)] sm:text-base">
-                            Discover posts, opportunities, academic discussions, tasks, and professional
-                            connections from students, universities, and companies.
-                        </p>
+                <div className="relative z-10">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-[var(--text-secondary)]">
+                        <span className="h-2 w-2 rounded-full bg-[var(--brand)]" />
+                        UniBond Home Feed
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-3 lg:w-[420px]">
+                    <h1 className="mt-5 max-w-3xl text-4xl font-black leading-tight tracking-tight text-[var(--text-primary)] sm:text-5xl xl:text-6xl">
+                        Connect, collaborate, and grow with{" "}
+                        <span className="bg-gradient-to-r from-[var(--brand)] to-[var(--accent)] bg-clip-text text-transparent">
+                            UniBond
+                        </span>
+                    </h1>
+
+                    <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--text-secondary)] sm:text-base">
+                        Discover posts, opportunities, academic discussions, tasks, and professional
+                        connections from students, universities, and companies.
+                    </p>
+
+                    <div className="mt-7 grid gap-3 sm:grid-cols-3">
                         <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
                             <div className="flex items-center gap-3">
                                 <div className="rounded-2xl bg-[var(--brand)]/15 p-2 text-[var(--brand)]">
                                     <MessageCircle className="h-5 w-5" />
                                 </div>
+
                                 <div>
                                     <p className="text-2xl font-black text-[var(--text-primary)]">
                                         {posts.length}
@@ -131,6 +130,7 @@ export default function Home() {
                                 <div className="rounded-2xl bg-[var(--brand)]/15 p-2 text-[var(--brand)]">
                                     <Users className="h-5 w-5" />
                                 </div>
+
                                 <div>
                                     <p className="text-2xl font-black text-[var(--text-primary)]">
                                         4
@@ -147,6 +147,7 @@ export default function Home() {
                                 <div className="rounded-2xl bg-[var(--brand)]/15 p-2 text-[var(--brand)]">
                                     <Sparkles className="h-5 w-5" />
                                 </div>
+
                                 <div>
                                     <p className="text-2xl font-black text-[var(--text-primary)]">
                                         Live
@@ -161,7 +162,7 @@ export default function Home() {
                 </div>
             </section>
 
-            <section className="grid gap-4 lg:grid-cols-3">
+            <section className="grid gap-4 xl:grid-cols-3">
                 {quickActions.map((action) => {
                     const Icon = action.icon;
 
@@ -198,6 +199,7 @@ export default function Home() {
                         <h2 className="text-xl font-black text-[var(--text-primary)]">
                             Share something with UniBond
                         </h2>
+
                         <p className="mt-1 text-sm text-[var(--text-secondary)]">
                             Post updates, questions, achievements, or collaboration ideas.
                         </p>
@@ -237,6 +239,7 @@ export default function Home() {
                         <h2 className="text-xl font-black text-[var(--text-primary)]">
                             Latest posts
                         </h2>
+
                         <p className="mt-1 text-sm text-[var(--text-secondary)]">
                             Stay updated with the newest UniBond activity.
                         </p>
