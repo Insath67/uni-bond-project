@@ -84,7 +84,7 @@ export default function KuppySessions() {
       setSessions(sessionData);
       setRequests(requestData);
     } catch (err: any) {
-      setBannerError(err.message || "Failed to load Kuppy data.");
+      setBannerError(err.message || "Failed to load student support session data.");
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ export default function KuppySessions() {
       setBannerSuccess(successMessage);
       await loadData();
     } catch (err: any) {
-      setBannerError(err.message || "The Kuppy action could not be completed.");
+      setBannerError(err.message || "The student support action could not be completed.");
     } finally {
       setBusyKey(null);
     }
@@ -134,7 +134,7 @@ export default function KuppySessions() {
         setCurrentStudentCount(1);
         setRequestFieldErrors({});
       },
-      "Kuppy request created successfully."
+      "Student support request created successfully."
     );
   };
 
@@ -208,7 +208,7 @@ export default function KuppySessions() {
       async () => {
         await handleConfirmKuppyOffer(requestId, offerId);
       },
-      "Kuppy offer confirmed and session scheduled."
+      "Lecturer offer confirmed and student support session scheduled."
     );
   };
 
@@ -222,12 +222,13 @@ export default function KuppySessions() {
           await handleJoinKuppySession(session.id);
         }
       },
-      isJoined ? "You left the Kuppy session." : "You joined the Kuppy session."
+      isJoined ? "You left the student support session." : "You joined the student support session."
     );
   };
 
   const isLecturer = user?.role === "lecturer";
   const isStudent = user?.role === "student";
+
   const openRequestsCount = requests.filter((request) => request.status === "open").length;
   const upcomingSessionsCount = sessions.filter((session) => session.status === "scheduled").length;
   const liveSessionsCount = sessions.filter((session) => session.status === "live").length;
@@ -236,18 +237,18 @@ export default function KuppySessions() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
-            <GraduationCap className="w-8 h-8 text-[var(--accent)]" />
-            Peer Kuppy Sessions
+          <h1 className="flex items-center gap-3 text-3xl font-bold text-[var(--text-primary)]">
+            <GraduationCap className="h-8 w-8 text-[var(--accent)]" />
+            Student Support Sessions
           </h1>
-          <p className="text-sm text-[var(--text-secondary)] mt-2">
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
             Students can request support and vote demand. Lecturers can publish sessions or answer requests with availability.
           </p>
         </div>
 
         {isLecturer ? (
           <button onClick={() => navigate("/kuppy/create")} className="btn-primary px-5 py-3 rounded-2xl shadow-sm">
-            + Host a Lecturer Kuppy
+            + Host a Student Support Session
           </button>
         ) : null}
       </div>
@@ -268,10 +269,14 @@ export default function KuppySessions() {
           <div className="relative">
             <div
               className="pointer-events-none absolute -left-10 top-0 h-28 w-28 rounded-full blur-3xl"
-              style={{ background: "color-mix(in srgb, var(--accent-soft) 85%, transparent)" }}
+              style={{
+                background: "color-mix(in srgb, var(--accent-soft) 85%, transparent)",
+              }}
             />
+
             <div className="relative space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em]"
+              <div
+                className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em]"
                 style={{
                   borderColor: "color-mix(in srgb, var(--accent) 18%, var(--border-soft))",
                   background: "color-mix(in srgb, var(--accent-soft) 58%, var(--surface-elevated))",
@@ -279,15 +284,16 @@ export default function KuppySessions() {
                 }}
               >
                 <Layers3 className="h-3.5 w-3.5" />
-                Kuppy Workflow
+                Support Workflow
               </div>
 
               <div className="max-w-3xl space-y-3">
                 <h2 className="text-3xl font-bold leading-tight text-[var(--text-primary)] lg:text-[2.7rem]">
-                  Request support, match the right lecturer, and run smoother Kuppy sessions.
+                  Request support, match the right lecturer, and run smoother student support sessions.
                 </h2>
                 <p className="max-w-2xl text-base leading-8 text-[var(--text-secondary)] lg:text-lg">
-                  Students can raise demand early, lecturers can answer with real availability, and confirmed sessions stay easy to track until they start and finish.
+                  Students can raise demand early, lecturers can answer with real availability, and confirmed sessions stay easy to track
+                  until they start and finish.
                 </p>
               </div>
 
@@ -302,6 +308,7 @@ export default function KuppySessions() {
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">For students</p>
                   <p className="mt-1 text-sm font-medium text-[var(--text-primary)]">Request sessions, vote demand, confirm offers</p>
                 </div>
+
                 <div
                   className="rounded-2xl border px-4 py-3"
                   style={{
@@ -355,7 +362,7 @@ export default function KuppySessions() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-[var(--text-primary)]">{label}</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">Kuppy status</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">Support Status</p>
                   </div>
                   <div
                     className="flex h-11 w-11 items-center justify-center rounded-2xl border"
@@ -402,13 +409,13 @@ export default function KuppySessions() {
       ) : null}
 
       {loading ? (
-        <SectionCard title="Kuppy Sessions">
-          <div className="py-14 text-center text-[var(--text-secondary)]">Loading Kuppy data...</div>
+        <SectionCard title="Student Support Sessions">
+          <div className="py-14 text-center text-[var(--text-secondary)]">Loading student support session data...</div>
         </SectionCard>
       ) : (
         <>
           {isStudent ? (
-            <SectionCard title="Request a Kuppy">
+            <SectionCard title="Request Student Support">
               <form onSubmit={handleRequestSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
                   <label className="field-label mb-1">Module name *</label>
@@ -461,7 +468,7 @@ export default function KuppySessions() {
 
           <SectionCard title="Live and Upcoming Sessions">
             {sessions.length === 0 ? (
-              <EmptyState icon={GraduationCap} title="No Kuppy sessions yet" description="Confirmed or lecturer-hosted Kuppy sessions will appear here." />
+              <EmptyState icon={GraduationCap} title="No student support sessions yet" description="Confirmed or lecturer-hosted student support sessions will appear here." />
             ) : (
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 {sessions.map((session) => {
@@ -545,9 +552,9 @@ export default function KuppySessions() {
             )}
           </SectionCard>
 
-          <SectionCard title={isLecturer ? "Student Requests Inbox" : "Student Request Board"}>
+          <SectionCard title={isLecturer ? "Student Support Requests Inbox" : "Student Support Request Board"}>
             {requests.length === 0 ? (
-              <EmptyState icon={MessageSquareText} title="No Kuppy requests yet" description="Student requests and lecturer availability offers will show up here." />
+              <EmptyState icon={MessageSquareText} title="No student support requests yet" description="Student requests and lecturer availability offers will show up here." />
             ) : (
               <div className="space-y-4">
                 {requests.map((request) => {
@@ -570,7 +577,7 @@ export default function KuppySessions() {
                           </div>
 
                           <div>
-                            <h3 className="text-xl font-bold text-[var(--text-primary)]">{request.student.fullName}'s Kuppy request</h3>
+                            <h3 className="text-xl font-bold text-[var(--text-primary)]">{request.student.fullName}'s student support request</h3>
                             <p className="mt-2 text-sm text-[var(--text-secondary)]">{request.description}</p>
                           </div>
 
@@ -603,7 +610,7 @@ export default function KuppySessions() {
                       {selectedOffer ? (
                         <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
                           <p className="text-sm font-semibold text-blue-800">Confirmed lecturer offer</p>
-                          <p className="mt-1 text-sm text-blue-700">{selectedOffer.lecturer.fullName} will hold this Kuppy from {formatDateTime(selectedOffer.availabilityStart)} to {formatDateTime(selectedOffer.availabilityEnd)}.</p>
+                          <p className="mt-1 text-sm text-blue-700">{selectedOffer.lecturer.fullName} will hold this student support session from {formatDateTime(selectedOffer.availabilityStart)} to {formatDateTime(selectedOffer.availabilityEnd)}.</p>
                         </div>
                       ) : null}
 

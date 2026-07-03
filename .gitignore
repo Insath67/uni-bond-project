@@ -13,8 +13,6 @@ backend/venv/
 backend/env/
 
 # Environment files
-.env
-.env.*
 backend/.env
 backend/.env.*
 frontend/.env
@@ -45,4 +43,4 @@ backend/data/
 # OS / Editor
 .DS_Store
 Thumbs.db
-.vscode/
+config.bat

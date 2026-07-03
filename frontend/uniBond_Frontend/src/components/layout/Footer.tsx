@@ -4,10 +4,10 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-8 border-t border-[var(--border-soft)] bg-[var(--surface)]/70 px-6 py-6 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-[var(--text-secondary)] md:flex-row md:items-center md:justify-between">
+    <footer className="shrink-0 border-t border-[var(--border-soft)] bg-[var(--surface)]/70 px-6 py-3 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm text-[var(--text-secondary)] md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--brand)]/15 text-[var(--brand)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[var(--brand)]/15 text-[var(--brand)]">
             <GraduationCap className="h-5 w-5" />
           </div>
 
@@ -19,9 +19,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <p className="text-xs">
-          © {currentYear} UniBond. All rights reserved.
-        </p>
+        <p className="text-xs">© {currentYear} UniBond. All rights reserved.</p>
 
         <div className="flex items-center gap-4">
           <a

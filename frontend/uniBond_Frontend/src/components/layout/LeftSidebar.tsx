@@ -54,36 +54,36 @@ export default function LeftSidebar() {
   ];
 
   return (
-    <div className="space-y-3 sticky top-[80px] max-h-[calc(100vh-80px)] overflow-y-auto pb-4">
+    <div className="sticky top-0 max-h-full space-y-3 overflow-y-auto pb-4">
       {/* Profile Card */}
       <div className="panel-surface rounded-2xl p-5">
-        <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-3">
+        <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
           Profile
         </h3>
 
         <Link
           to={ROUTES.PROFILE}
-          className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[var(--surface-muted)] transition-all duration-200 active:scale-[0.98] group"
+          className="group flex items-center gap-3 rounded-xl p-2.5 transition-all duration-200 hover:bg-[var(--surface-muted)] active:scale-[0.98]"
         >
-          <div className="w-11 h-11 rounded-full bg-[var(--surface-muted)] text-[var(--text-primary)] flex items-center justify-center font-bold text-sm shrink-0 group-hover:ring-2 group-hover:ring-[var(--brand-soft)] transition-all overflow-hidden border border-[var(--border-soft)]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border-soft)] bg-[var(--surface-muted)] text-sm font-bold text-[var(--text-primary)] transition-all group-hover:ring-2 group-hover:ring-[var(--brand-soft)]">
             {user.avatar ? (
               <img
                 src={user.avatar}
                 alt={displayName}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
             ) : user.firstname ? (
               initials
             ) : (
-              <User className="w-5 h-5" />
+              <User className="h-5 w-5" />
             )}
           </div>
 
           <div>
-            <p className="font-semibold text-[var(--text-primary)] text-sm leading-tight">
+            <p className="text-sm font-semibold leading-tight text-[var(--text-primary)]">
               {displayName}
             </p>
-            <p className="text-xs text-[var(--text-secondary)] capitalize mt-0.5">
+            <p className="mt-0.5 text-xs capitalize text-[var(--text-secondary)]">
               {user.role.replace("_", " ")}
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function LeftSidebar() {
 
       {/* Menu Card */}
       <div className="panel-surface rounded-2xl p-5">
-        <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-3">
+        <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
           Menu
         </h3>
 
@@ -104,27 +104,27 @@ export default function LeftSidebar() {
               <Link
                 key={to}
                 to={to}
-                className={`flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 ease-in-out active:scale-[0.98] group ${
+                className={`group flex items-center gap-3 rounded-xl p-2.5 transition-all duration-200 ease-in-out active:scale-[0.98] ${
                   isActive
                     ? "bg-[var(--brand-soft)] shadow-inner"
                     : "hover:bg-[var(--surface-muted)]"
                 }`}
               >
                 <div
-                  className={`p-2 rounded-lg transition-colors shrink-0 ${
+                  className={`shrink-0 rounded-lg p-2 transition-colors ${
                     isActive
                       ? "bg-[var(--brand)] text-white"
                       : "bg-[var(--surface-muted)] text-[var(--text-secondary)] group-hover:bg-[var(--brand)] group-hover:text-white"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="h-4 w-4" />
                 </div>
 
                 <div>
-                  <p className="font-semibold text-[var(--text-primary)] text-sm leading-tight">
+                  <p className="text-sm font-semibold leading-tight text-[var(--text-primary)]">
                     {label}
                   </p>
-                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                  <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
                     {description}
                   </p>
                 </div>
