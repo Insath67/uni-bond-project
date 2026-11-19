@@ -43,3 +43,4 @@ backend/data/
 # OS / Editor
 .DS_Store
 Thumbs.db
+config.bat
